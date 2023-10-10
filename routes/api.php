@@ -43,8 +43,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/posts/{post}/react/{reactionId}', [UserReactionController::class, 'reactToPost']);
     Route::post('/comments/{comment}/react/{reactionId}', [UserReactionController::class, 'reactToComment']);
     Route::post('/replies/{reply}/react/{reactionId}', [UserReactionController::class, 'reactToReply']);
-
-
-
     Route::get('/notifications', [NotificationController::class, 'index']);
+
+
 });
+

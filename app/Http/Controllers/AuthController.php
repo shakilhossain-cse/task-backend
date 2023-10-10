@@ -23,7 +23,7 @@ class AuthController extends Controller
                 'password' => bcrypt($fields['password'])
             ]);
 
-            $token = $user->createToken('myapptoken')->plainTextToken;
+            $token = $user->createToken(config('basic.apptoken'))->plainTextToken;
 
             $response = [
                 'user' => $user,
@@ -51,7 +51,7 @@ class AuthController extends Controller
                 ], 401);
             }
 
-            $token = $user->createToken('myapptoken')->plainTextToken;
+            $token = $user->createToken(config('basic.apptoken'))->plainTextToken;
 
             $response = [
                 'user' => $user,
@@ -60,6 +60,9 @@ class AuthController extends Controller
 
             return response($response, 200);
         }
+
+
+
         // logout user
         public function logout()
         {
@@ -68,4 +71,8 @@ class AuthController extends Controller
                 'message' => 'Logged out'
             ];
         }
+
+
+
+
 }

@@ -61,13 +61,13 @@ class UserReactionController extends Controller
             'reactable_type' => get_class($model),
         ]);
 
-        $reactableOwner = $model->user; 
+        $reactableOwner = $model->user;
         $notificationMessage = "New reaction on your {$model->getMorphClass()}";
 
         $notification = $reactableOwner->notifications()->create([
             'notifiable_id' => $model->id,
             'notifiable_type' => get_class($model),
-            'data' => json_encode(['message' => $notificationMessage, 'reaction_id' => $reaction->id]),
+            'data' => ['message' => $notificationMessage, 'reaction_id' => $reaction->id],
             'read' => false,
         ]);
 

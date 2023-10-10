@@ -5,19 +5,21 @@ namespace App\Http\Controllers;
 use App\Models\Post;
 use App\Models\Reaction;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
     //get all posts
     public function index()
     {
-        $posts = Post::with(['user', 'reactions.reaction'])->get();
+        $posts = Post::with(['user', 'reactions.reaction'])->latest()->get();
 
         foreach ($posts as $post) {
             $postReactions = $post->reactions->groupBy('reaction.title')->map(function ($item) {
                 return [
                     'title' => $item->first()->reaction->title,
                     'count' => $item->count(),
+                    'user'=> $item->pluck('user_id')->contains(Auth::id()),
                 ];
             })->values()->toArray();
 
@@ -41,7 +43,7 @@ class PostController extends Controller
             foreach ($request->file('images') as $image) {
                 $imageName = time() . '_' . $image->getClientOriginalName();
                 $image->storeAs('public/images', $imageName);
-                $imagePaths[] = asset('storage/images/' . $imageName);
+                $imageNames[] = asset('storage/images/' . $imageName);
             }
         }
 
@@ -59,20 +61,24 @@ class PostController extends Controller
     public function show($id)
     {
 
-        $post = Post::with(['user','comments.user', 'comments.replies', 'comments.reactions.reaction','comments.replies.user','comments.replies.reactions.reaction','reactions.reaction' ])->findOrFail($id);
-        $postReactions = $post->reactions->groupBy('reaction.title')->map(function ($item) {
+        $authenticatedUser = Auth::user();
+
+        $post = Post::with(['user', 'comments.user', 'comments.replies', 'comments.reactions.reaction', 'comments.replies.user', 'comments.replies.reactions.reaction', 'reactions.reaction'])->findOrFail($id);
+        $postReactions = $post->reactions->groupBy('reaction.title')->map(function ($item) use ($authenticatedUser) {
             return [
                 'title' => $item->first()->reaction->title,
                 'count' => $item->count(),
+                'user' => $item->pluck('user_id')->contains($authenticatedUser->id),
             ];
         })->values()->toArray();
         $post->reactionsData = $postReactions;
 
         foreach ($post->comments as $comment) {
-            $commentReactions = $comment->reactions->groupBy('reaction.title')->map(function ($item) {
+            $commentReactions = $comment->reactions->groupBy('reaction.title')->map(function ($item) use ($authenticatedUser) {
                 return [
                     'title' => $item->first()->reaction->title,
                     'count' => $item->count(),
+                    'user' => $item->pluck('user_id')->contains($authenticatedUser->id),
                 ];
             })->values()->toArray();
 
@@ -81,18 +87,22 @@ class PostController extends Controller
 
             // Process reactions for comment replies
             foreach ($comment->replies as $reply) {
-                $replyReactions = $reply->reactions->groupBy('reaction.title')->map(function ($item) {
+                $replyReactions = $reply->reactions->groupBy('reaction.title')->map(function ($item) use ($authenticatedUser) {
                     return [
                         'title' => $item->first()->reaction->title,
                         'count' => $item->count(),
+                        'user' => $item->pluck('user_id')->contains($authenticatedUser->id),
                     ];
                 })->values()->toArray();
                 $reply->reactionsData = $replyReactions;
             }
         }
 
+
         return  response()->json(['post' => $post]);
     }
+
+
 
 }
 

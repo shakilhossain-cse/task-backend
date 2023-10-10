@@ -16,14 +16,14 @@ class CommentController extends Controller
         $commentOwnerNotification = auth()->user()->notifications()->create([
             'notifiable_id' => $comment->id,
             'notifiable_type' => Comment::class,
-            'data' => json_encode(['message' => 'New comment added', 'comment_id' => $comment->id]),
+            'data' => ['message' => 'New comment added', 'comment_id' => $comment->id],
             'read' => false,
         ]);
 
         $postOwnerNotification = $post->user->notifications()->create([
             'notifiable_id' => $comment->id,
             'notifiable_type' => Comment::class,
-            'data' => json_encode(['message' => 'New comment on your post', 'comment_id' => $comment->id]),
+            'data' => ['message' => 'New comment on your post', 'comment_id' => $comment->id],
             'read' => false,
         ]);
 

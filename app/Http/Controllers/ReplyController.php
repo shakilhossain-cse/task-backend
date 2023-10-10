@@ -16,7 +16,7 @@ class ReplyController extends Controller
         $commentOwnerNotification = $comment->user->notifications()->create([
             'notifiable_id' => $reply->id,
             'notifiable_type' => Reply::class,
-            'data' => json_encode(['message' => 'New reply on your comment', 'reply_id' => $reply->id]),
+            'data' => ['message' => 'New reply on your comment', 'reply_id' => $reply->id],
             'read' => false,
         ]);
 
@@ -24,7 +24,7 @@ class ReplyController extends Controller
         $postOwnerNotification = $comment->post->user->notifications()->create([
             'notifiable_id' => $reply->id,
             'notifiable_type' => Reply::class,
-            'data' => json_encode(['message' => 'New reply on a comment on your post', 'reply_id' => $reply->id]),
+            'data' => ['message' => 'New reply on a comment on your post', 'reply_id' => $reply->id],
             'read' => false,
         ]);
 
