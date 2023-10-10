@@ -20,9 +20,8 @@ class CommentController extends Controller
             'read' => false,
         ]);
 
-        // Create a notification for the post owner
         $postOwnerNotification = $post->user->notifications()->create([
-            'notifiable_id' => $comment->id, // You might want to use a different ID here
+            'notifiable_id' => $comment->id,
             'notifiable_type' => Comment::class,
             'data' => json_encode(['message' => 'New comment on your post', 'comment_id' => $comment->id]),
             'read' => false,
@@ -31,7 +30,7 @@ class CommentController extends Controller
         // Dispatch the events
         event(new NewNotificationEvent($commentOwnerNotification));
         event(new NewNotificationEvent($postOwnerNotification));
-        
+
         return response()->json($comment, 201);
     }
 }
