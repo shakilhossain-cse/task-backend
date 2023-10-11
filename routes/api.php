@@ -26,7 +26,9 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 
 Route::post('/register',[AuthController::class, 'register']);
-Route::post('/login', [AuthController::class,'login']);;
+Route::post('/login', [AuthController::class,'login']);
+Route::post('/forget-password', [AuthController::class,'forgetPassword']);
+Route::post('/password/reset', [AuthController::class, 'resetPassword']);
 
 
 
@@ -39,12 +41,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/posts/{post}/comments', [CommentController::class, 'store']);
     Route::post('/comments/{comment}/replies', [ReplyController::class, 'store']);
     Route::get('/reactions', [UserReactionController::class, 'allreactions']);
-
     Route::post('/posts/{post}/react/{reactionId}', [UserReactionController::class, 'reactToPost']);
     Route::post('/comments/{comment}/react/{reactionId}', [UserReactionController::class, 'reactToComment']);
     Route::post('/replies/{reply}/react/{reactionId}', [UserReactionController::class, 'reactToReply']);
     Route::get('/notifications', [NotificationController::class, 'index']);
-
-
 });
 
